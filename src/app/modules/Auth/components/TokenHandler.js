@@ -56,6 +56,7 @@ function TokenHandler(props) {
         }
       })
       .catch((error) => {
+        alert(error.message)
         dispatch(authAction.actions.logout());
       });
   };

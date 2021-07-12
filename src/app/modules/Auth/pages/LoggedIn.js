@@ -14,7 +14,7 @@ function LoggedIn() {
     },
   }));
   const classes = useStyle();
-  const [second, setSecond] = React.useState(3);
+  const [second, setSecond] = React.useState(2);
   React.useEffect(() => {
     // setTimeout(()=>{  }, 5000);
 
