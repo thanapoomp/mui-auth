@@ -6,14 +6,20 @@ import { useFormik } from "formik";
 import { Grid, Button, Box, Icon, Paper } from "@material-ui/core/";
 import { useDispatch } from "react-redux";
 import FormikTextField from "../../Common/components/CustomFormik/FormikTextField";
+import FormikCheckBox from "../../Common/components/CustomFormik/FormikCheckBox";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { Helmet } from "react-helmet";
 import * as CONST from "../../../../Constant";
 import * as swal from "../../Common/components/SweetAlert";
+import { useSelector } from "react-redux";
 import * as authRedux from "../_redux/authRedux";
+import * as loginRedux from "../_redux/loginRedux";
 import * as authCrud from "../_redux/authCrud";
 
+var CryptoJS = require("crypto-js");
+
 function Login() {
+  const loginReducer = useSelector(({ loginRemember }) => loginRemember);
   const useStyle = makeStyles((theme) => ({
     image: {
       width: 100,
@@ -24,9 +30,16 @@ function Login() {
   const dispatch = useDispatch();
   const [state] = React.useState({
     source: "SiamSmile.Dev",
-    username: "test01",
-    password: "string",
   });
+  const [pass, setpass] = React.useState("")
+
+  //decrypt pass
+  React.useEffect(() => {
+    if (loginReducer.password !== null) {
+      var bytes = CryptoJS.AES.decrypt(loginReducer.password, 'key');
+      setpass(bytes.toString(CryptoJS.enc.Utf8));
+    }
+  }, [])
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -44,9 +57,10 @@ function Login() {
       return errors;
     },
     initialValues: {
-      username: state.username,
-      password: state.password,
-      source: state.source
+      username: (loginReducer.remember ? loginReducer.user : ""),
+      password: (loginReducer.remember ? pass : ""),
+      source: state.source,
+      remember: (loginReducer.remember === null ? false : loginReducer.remember)
     },
     onSubmit: (values) => {
       //submit ....
@@ -56,6 +70,7 @@ function Login() {
           if (res.data.isSuccess) {
             // debugger
             let loginDetail = {};
+            let loginRemember = {};
 
             //get token
             loginDetail.authToken = res.data.data;
@@ -70,6 +85,16 @@ function Login() {
             loginDetail.roles = authCrud.getRoles(res.data.data);
 
             dispatch(authRedux.actions.login(loginDetail));
+
+            //encrypt pass
+            let ciphertext = CryptoJS.AES.encrypt(values.password, 'key').toString();
+
+            loginRemember.user = values.username;
+            loginRemember.password = ciphertext;
+            loginRemember.remember = values.remember;
+            //remember
+            dispatch(loginRedux.actions.loginRemember(loginRemember));
+
           } else {
             //Failed
             swal.swalError("Login failed", res.data.message).then((res) => {
@@ -151,6 +176,9 @@ function Login() {
             )}
 
             {formik.isSubmitting && <CircularProgress size={24} />}
+          </Grid>
+          <Grid item xs={12} lg={12}>
+            <FormikCheckBox formik={formik} name="remember" label="Remember me" />
           </Grid>
         </Grid>
       </Box>
