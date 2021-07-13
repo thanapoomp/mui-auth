@@ -24,6 +24,7 @@ export const reducer = persistReducer(
       case actionTypes.Login: {
         //raiseEventMessage for SSO-IFrame
         authSSOMessage.sendEventMessage("token-updated", action.payload.authToken);
+        debugger
         return {
           ...state,
           source: initialAuthState.source,

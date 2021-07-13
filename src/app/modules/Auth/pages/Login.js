@@ -6,14 +6,17 @@ import { useFormik } from "formik";
 import { Grid, Button, Box, Icon, Paper } from "@material-ui/core/";
 import { useDispatch } from "react-redux";
 import FormikTextField from "../../Common/components/CustomFormik/FormikTextField";
+import FormikCheckBox from "../../Common/components/CustomFormik/FormikCheckBox";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { Helmet } from "react-helmet";
 import * as CONST from "../../../../Constant";
 import * as swal from "../../Common/components/SweetAlert";
+import { useSelector } from "react-redux";
 import * as authRedux from "../_redux/authRedux";
 import * as authCrud from "../_redux/authCrud";
 
 function Login() {
+  const authReducer = useSelector(({ auth }) => auth)
   const useStyle = makeStyles((theme) => ({
     image: {
       width: 100,
@@ -24,8 +27,6 @@ function Login() {
   const dispatch = useDispatch();
   const [state] = React.useState({
     source: "SiamSmile.Dev",
-    username: "test01",
-    password: "string",
   });
 
   const formik = useFormik({
@@ -44,9 +45,10 @@ function Login() {
       return errors;
     },
     initialValues: {
-      username: state.username,
-      password: state.password,
-      source: state.source
+      username: authReducer.user,
+      password: authReducer.password,
+      source: state.source,
+      remember: authReducer.remember
     },
     onSubmit: (values) => {
       debugger
@@ -69,6 +71,8 @@ function Login() {
 
             //get roles
             loginDetail.roles = authCrud.getRoles(res.data.data);
+
+            loginDetail.remember = values.remember;
 
             dispatch(authRedux.actions.login(loginDetail));
           } else {
@@ -152,6 +156,9 @@ function Login() {
             )}
 
             {formik.isSubmitting && <CircularProgress size={24} />}
+          </Grid>
+          <Grid item xs={12} lg={12}>
+            <FormikCheckBox formik={formik} name="remember" label="Remember me" />
           </Grid>
         </Grid>
       </Box>
