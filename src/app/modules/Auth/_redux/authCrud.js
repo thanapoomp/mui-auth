@@ -39,7 +39,6 @@ export function renewToken() {
 }
 
 export function changepassword(oldPassword, oldConfirmPassword, newPassword, newConfirmPassword) {
-  debugger
   return axios.post(CHANGPASSWORD_URL, { oldPassword, oldConfirmPassword, newPassword, newConfirmPassword })
 }
 

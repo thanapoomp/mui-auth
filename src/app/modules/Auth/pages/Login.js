@@ -49,7 +49,6 @@ function Login() {
       source: state.source
     },
     onSubmit: (values) => {
-      debugger
       //submit ....
       authCrud
         .login(values.username, values.password, values.source)

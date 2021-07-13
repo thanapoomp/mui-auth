@@ -50,7 +50,6 @@ function Changepassword() {
 			confirmNewPassword: ""
 		},
 		onSubmit: (values) => {
-			debugger
 			//submit ....
 			authCrud.changepassword(values.oldPassword, values.oldPassword, values.newPassword, values.confirmNewPassword)
 				.then((res) => {

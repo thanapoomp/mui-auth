@@ -22,6 +22,7 @@ export const reducer = persistReducer(
     switch (action.type) {
       //login
       case actionTypes.Login: {
+        console.log('login','sso')
         //raiseEventMessage for SSO-IFrame
         authSSOMessage.sendEventMessage("token-updated", action.payload.authToken);
         return {
@@ -38,14 +39,7 @@ export const reducer = persistReducer(
         console.log("logout", "sso");
         //raiseEventMessage for SSO-IFrame
         authSSOMessage.sendEventMessage("token-updated", "");
-        return {
-          ...state,
-          source: null,
-          user: null,
-          authToken: null,
-          exp: null,
-          roles: [],
-        };
+        return {initialAuthState};
       }
 
       case actionTypes.RenewToken: {
