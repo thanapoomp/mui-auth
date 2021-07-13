@@ -9,8 +9,8 @@ export const APP_INFO = {
 export const API_URL =
   !process.env.NODE_ENV || process.env.NODE_ENV === "development"
     // ? "https://auth.devsiamsmile.com/api" //dev
-    // ? "https://api.thanapoom.cc/api" //dev
-    ? "https://localhost:44388/api" // local
+    ? "https://api.thanapoom.cc/api" //dev
+    // ? "https://localhost:44388/api" // local
     : // ?  "http://localhost:54821/api" //dev
     "https://api.thanapoom.cc/api"; // Production
 
@@ -18,4 +18,4 @@ export const SSO_URL_LOGOUT =
   !process.env.NODE_ENV || process.env.NODE_ENV === "development"
     // ? "https://auth.thanapoom.cc/#/logout" //dev
     ? "http://localhost:3000/#/logout" //dev
-    : "https://auth.thanapoom.cc/#/login"; // Production
+    : "http://localhost:3000/#/logout"; // Production

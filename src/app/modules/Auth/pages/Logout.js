@@ -17,26 +17,17 @@ function Logout() {
   }));
   const classes = useStyle();
   const dispatch = useDispatch();
-  const [second, setSecond] = React.useState(2);
-  React.useEffect(() => {
-    // setTimeout(()=>{  }, 5000);
-
-    const intervalId = setInterval(() => {
-      //assign interval to a variable to clear it.
-      if (second > 1) {
-        setSecond(second - 1);
-      } else {
-        setSecond(0);
-        window.close();
-      }
-    }, 1000);
-
-    return () => clearInterval(intervalId); //This is important
-  }, [second]);
 
   React.useEffect(() => {
     dispatch(auth.actions.logout());
+
+    const timeoutID = window.setTimeout(() => {
+      window.close();
+    }, 1000);
+
+    return () => window.clearTimeout(timeoutID);
   }, []);
+  
 
   return (
     <div>
@@ -63,7 +54,8 @@ function Logout() {
           </Paper>
           <Typography variant="body1">Log out สำเร็จ</Typography>
           <Typography variant="body1">
-            คุณสามารถปิดหน้านี้ได้ {second > 0 && `(${second})`}
+            {/* คุณสามารถปิดหน้านี้ได้ {second > 0 && `(${second})`} */}
+            คุณสามารถปิดหน้านี้ได้
           </Typography>
         </Grid>
       </Grid>

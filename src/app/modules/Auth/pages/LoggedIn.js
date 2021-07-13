@@ -4,9 +4,12 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Paper } from "@material-ui/core";
 import { Helmet } from "react-helmet";
 import Typography from "@material-ui/core/Typography";
+import {  useSelector } from "react-redux";
 import * as CONST from "../../../../Constant";
 
 function LoggedIn() {
+  const authReducer = useSelector(({ auth }) => auth);
+
   const useStyle = makeStyles((theme) => ({
     image: {
       width: 100,
@@ -14,22 +17,12 @@ function LoggedIn() {
     },
   }));
   const classes = useStyle();
-  const [second, setSecond] = React.useState(2);
+
   React.useEffect(() => {
-    // setTimeout(()=>{  }, 5000);
-
-    const intervalId = setInterval(() => {
-      //assign interval to a variable to clear it.
-      if (second > 1) {
-        setSecond(second - 1);
-      } else {
-        setSecond(0);
-        window.close();
-      }
-    }, 1000);
-
-    return () => clearInterval(intervalId); //This is important
-  }, [second]);
+    if (authReducer.authToken) {
+      window.close();
+    }
+  }, [authReducer.authToken])
 
   return (
     <div>
@@ -56,7 +49,8 @@ function LoggedIn() {
           </Paper>
           <Typography variant="body1">Log in สำเร็จ</Typography>
           <Typography variant="body1">
-            คุณสามารถปิดหน้านี้ได้ {second > 0 && `(${second})`}
+            {/* คุณสามารถปิดหน้านี้ได้ {second > 0 && `(${second})`} */}
+            คุณสามารถปิดหน้านี้ได้
           </Typography>
         </Grid>
       </Grid>

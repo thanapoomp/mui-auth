@@ -3,6 +3,7 @@ import React from "react";
 import * as authCrud from "../_redux/authCrud";
 import * as authAction from "../_redux/authRedux";
 import { useDispatch, useSelector } from "react-redux";
+import * as authSSOMessage from '../_redux/authSSOMessage'
 var dayjs = require("dayjs");
 
 function getRandomInt(min, max) {
@@ -22,6 +23,23 @@ function NewTokenHandler() {
   });
   const authReducer = useSelector(({ auth }) => auth);
   var renewTokenTimer;
+
+  React.useEffect(() => {
+    if (authReducer.authToken !== "null" && authReducer.authToken !== "") {
+      // get expire
+      let tokenExpire = authCrud.getExp(authReducer.authToken);
+      let countDownSec = getCountDownSec(tokenExpire);
+      renewTokenTimer = setTimeout(() => {
+        renew();
+      }, countDownSec);
+    }else{
+      console.log("token-update-logout-(TokenHandler)");
+      authSSOMessage.sendEventMessage("token-updated", "");
+      dispatch(authAction.actions.logout());
+    }
+    return () => clearTimeout(renewTokenTimer);
+  }, [authReducer.authToken]);
+
   const renew = () => {
     authCrud
       .renewToken()
@@ -43,14 +61,20 @@ function NewTokenHandler() {
           //get roles
           loginDetail.roles = authCrud.getRoles(token);
 
+          console.log("token-update-renew-(TokenHandler)");
+          authSSOMessage.sendEventMessage("token-updated", token);
           dispatch(authAction.actions.renewToken(loginDetail));
         } else {
           alert(res.data.message);
+          console.log("token-update-logout-(TokenHandler)");
+          authSSOMessage.sendEventMessage("token-updated", "");
           dispatch(authAction.actions.logout());
         }
       })
       .catch((error) => {
         alert(error.message);
+        console.log("token-update-logout-(TokenHandler)");
+        authSSOMessage.sendEventMessage("token-updated", "");
         dispatch(authAction.actions.logout());
       });
   };
@@ -66,39 +90,6 @@ function NewTokenHandler() {
     console.log("time(sec):", result);
     return result;
   };
-
-  const handleUpdateLogout = (e) => {
-    //get local storage 'token'
-    if (e.key === 'persist:auth') {
-      let authLocalStorage = JSON.parse(localStorage.getItem("persist:auth"));
-      if (!authLocalStorage.authToken) {
-        dispatch(authAction.actions.logout());
-      }
-    }
-  };
-
-  React.useEffect(() => {
-    // catch local storage event from other page
-    // logout listener
-    window.addEventListener("storage", handleUpdateLogout);
-    return () => {
-      window.removeEventListener("storage", handleUpdateLogout);
-    };
-  }, []);
-
-  React.useEffect(() => {
-    if (authReducer.authToken !== "null" && authReducer.authToken !== "") {
-      // get expire
-      let tokenExpire = authCrud.getExp(authReducer.authToken);
-      let countDownSec = getCountDownSec(tokenExpire);
-      renewTokenTimer = setTimeout(() => {
-        renew();
-      }, countDownSec);
-    }else{
-      dispatch(authAction.actions.logout());
-    }
-    return () => clearTimeout(renewTokenTimer);
-  }, [authReducer.authToken]);
 
   return <div>{/* {authReducer.authToken} */}</div>;
 }

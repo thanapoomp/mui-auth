@@ -1,6 +1,6 @@
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import * as authSSOMessage from './authSSOMessage'
+
 
 export const actionTypes = {
   Login: "[Login] Action",
@@ -22,10 +22,6 @@ export const reducer = persistReducer(
     switch (action.type) {
       //login
       case actionTypes.Login: {
-        console.log('login','sso')
-        //raiseEventMessage for SSO-IFrame
-        authSSOMessage.sendEventMessage("token-updated", action.payload.authToken);
-
         return {
           ...state,
           source: initialAuthState.source,
@@ -37,16 +33,10 @@ export const reducer = persistReducer(
       }
 
       case actionTypes.Logout: {
-        console.log("logout", "sso");
-        //raiseEventMessage for SSO-IFrame
-        authSSOMessage.sendEventMessage("token-updated", "");
         return {initialAuthState};
       }
 
       case actionTypes.RenewToken: {
-        console.log("renew", "sso");
-        //raiseEventMessage for SSO-IFrame
-        authSSOMessage.sendEventMessage("token-updated", action.payload.authToken);
         return {
           ...state,
           source: initialAuthState.source,
