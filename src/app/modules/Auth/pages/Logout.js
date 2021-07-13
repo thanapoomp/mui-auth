@@ -1,14 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as auth from "../_redux/authRedux";
 import { Helmet } from "react-helmet";
 import * as CONST from "../../../../Constant";
 import { Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Paper } from "@material-ui/core";
+import Swal from "sweetalert2";
+import * as loginRedux from "../_redux/loginRedux";
 
 function Logout() {
+  const loginReducer = useSelector(({ loginRemember }) => loginRemember);
   const useStyle = makeStyles((theme) => ({
     image: {
       width: 100,
@@ -17,26 +20,41 @@ function Logout() {
   }));
   const classes = useStyle();
   const dispatch = useDispatch();
-  const [second, setSecond] = React.useState(2);
-  React.useEffect(() => {
-    // setTimeout(()=>{  }, 5000);
-
-    const intervalId = setInterval(() => {
-      //assign interval to a variable to clear it.
-      if (second > 1) {
-        setSecond(second - 1);
-      } else {
-        setSecond(0);
-        window.close();
-      }
-    }, 1000);
-
-    return () => clearInterval(intervalId); //This is important
-  }, [second]);
+  const [second, setSecond] = React.useState(3);
 
   React.useEffect(() => {
-    dispatch(auth.actions.logout());
+    if (loginReducer.remember) {
+      Swal.fire({
+        title: 'Log out สำเร็จ',
+        text: "Delete Remember ด้วยหรือไม่",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'No',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          dispatch(loginRedux.actions.logoutRemember());
+          Swal.fire(
+            'Delete success!',
+            '',
+            'success'
+          )
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          //todo
+          dispatch(auth.actions.logout());
+        }
+      })
+    } else {
+      dispatch(auth.actions.logout());
+    }
+
   }, []);
+
+  React.useEffect(() => {
+    // dispatch(auth.actions.logout());
+  }, [loginReducer])
 
   return (
     <div>
