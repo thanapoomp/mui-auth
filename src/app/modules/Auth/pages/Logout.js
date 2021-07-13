@@ -35,12 +35,18 @@ function Logout() {
         confirmButtonText: 'Yes, delete it!'
       }).then((result) => {
         if (result.isConfirmed) {
-          dispatch(loginRedux.actions.logoutRemember());
-          Swal.fire(
-            'Delete success!',
-            '',
-            'success'
-          )
+          try {
+            dispatch(loginRedux.actions.logoutRemember());
+            Swal.fire(
+              'Delete success!',
+              '',
+              'success'
+            )
+          } catch (error) {
+            alert(error);
+          } finally {
+            dispatch(auth.actions.logout());
+          }
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           //todo
           dispatch(auth.actions.logout());
@@ -51,10 +57,6 @@ function Logout() {
     }
 
   }, []);
-
-  React.useEffect(() => {
-    // dispatch(auth.actions.logout());
-  }, [loginReducer])
 
   return (
     <div>
