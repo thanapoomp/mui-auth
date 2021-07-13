@@ -24,7 +24,7 @@ function LoggedIn() {
         setSecond(second - 1);
       } else {
         setSecond(0);
-        window.close();
+        // window.close();
       }
     }, 1000);
 

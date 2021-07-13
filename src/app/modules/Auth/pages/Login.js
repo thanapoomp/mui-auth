@@ -13,10 +13,13 @@ import * as CONST from "../../../../Constant";
 import * as swal from "../../Common/components/SweetAlert";
 import { useSelector } from "react-redux";
 import * as authRedux from "../_redux/authRedux";
+import * as loginRedux from "../_redux/loginRedux";
 import * as authCrud from "../_redux/authCrud";
 
+var CryptoJS = require("crypto-js");
+
 function Login() {
-  const authReducer = useSelector(({ auth }) => auth)
+  const loginReducer = useSelector(({ loginRemember }) => loginRemember);
   const useStyle = makeStyles((theme) => ({
     image: {
       width: 100,
@@ -28,6 +31,15 @@ function Login() {
   const [state] = React.useState({
     source: "SiamSmile.Dev",
   });
+  const [pass, setpass] = React.useState("")
+
+  //decrypt pass
+  React.useEffect(() => {
+    if (loginReducer.password !== null) {
+      var bytes = CryptoJS.AES.decrypt(loginReducer.password, 'key');
+      setpass(bytes.toString(CryptoJS.enc.Utf8));
+    }
+  }, [])
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -45,10 +57,10 @@ function Login() {
       return errors;
     },
     initialValues: {
-      username: authReducer.user,
-      password: authReducer.password,
+      username: (loginReducer.remember ? loginReducer.user : ""),
+      password: (loginReducer.remember ? pass : ""),
       source: state.source,
-      remember: authReducer.remember
+      remember: (loginReducer.remember === null ? false : loginReducer.remember)
     },
     onSubmit: (values) => {
       debugger
@@ -59,6 +71,7 @@ function Login() {
           if (res.data.isSuccess) {
             // debugger
             let loginDetail = {};
+            let loginRemember = {};
 
             //get token
             loginDetail.authToken = res.data.data;
@@ -72,9 +85,17 @@ function Login() {
             //get roles
             loginDetail.roles = authCrud.getRoles(res.data.data);
 
-            loginDetail.remember = values.remember;
-
             dispatch(authRedux.actions.login(loginDetail));
+
+            //encrypt pass
+            let ciphertext = CryptoJS.AES.encrypt(values.password, 'key').toString();
+
+            loginRemember.user = values.username;
+            loginRemember.password = ciphertext;
+            loginRemember.remember = values.remember;
+            //remember
+            dispatch(loginRedux.actions.loginRemember(loginRemember));
+
           } else {
             //Failed
             swal.swalError("Login failed", res.data.message).then((res) => {
