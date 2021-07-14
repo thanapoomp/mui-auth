@@ -7,15 +7,13 @@ import * as CONST from "../../../../Constant";
 import { Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Paper, Button, Icon } from "@material-ui/core";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import Swal from "sweetalert2";
 import { useFormik } from "formik";
 import * as loginRedux from "../_redux/loginRedux";
 import FormikCheckBox from "../../Common/components/CustomFormik/FormikCheckBox";
 
 function Logout() {
 
-  const loginReducer = useSelector(({ loginRemember }) => loginRemember);
+  // const loginReducer = useSelector(({ loginRemember }) => loginRemember);
   const authReducer = useSelector(({ auth }) => auth);
 
   const useStyle = makeStyles((theme) => ({
@@ -26,43 +24,6 @@ function Logout() {
   }));
   const classes = useStyle();
   const dispatch = useDispatch();
-  // React.useEffect(() => {
-  //   if (loginReducer.remember) {
-  //     Swal.fire({
-  //       title: 'Log out สำเร็จ',
-  //       text: "Delete Remember ด้วยหรือไม่",
-  //       icon: 'warning',
-  //       showCancelButton: true,
-  //       confirmButtonColor: '#3085d6',
-  //       cancelButtonColor: '#d33',
-  //       cancelButtonText: 'No',
-  //       confirmButtonText: 'Yes, delete it!'
-  //     }).then((result) => {
-  //       if (result.isConfirmed) {
-  //         try {
-  //           dispatch(loginRedux.actions.logoutRemember());
-  //           Swal.fire(
-  //             'Delete success!',
-  //             '',
-  //             'success'
-  //           ).then(() => {
-  //             dispatch(auth.actions.logout());
-  //           })
-  //         } catch (error) {
-  //           alert(error);
-  //         } finally {
-  //           dispatch(auth.actions.logout());
-  //         }
-  //       } else if (result.dismiss === Swal.DismissReason.cancel) {
-  //         //todo
-  //         dispatch(auth.actions.logout());
-  //       }
-  //     })
-  //   } else {
-  //     dispatch(auth.actions.logout());
-  //   }
-  // }, []);
-
 
   // React.useEffect(() => {
   //   dispatch(auth.actions.logout());
