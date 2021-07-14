@@ -8,12 +8,12 @@ import { Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Paper, Button, Icon } from "@material-ui/core";
 import { useFormik } from "formik";
-import * as loginRedux from "../_redux/loginRedux";
+import * as authRememberLoginRedux from "../_redux/authRememberLoginRedux";
 import FormikCheckBox from "../../Common/components/CustomFormik/FormikCheckBox";
 
 function Logout() {
 
-  // const loginReducer = useSelector(({ loginRemember }) => loginRemember);
+  const loginReducer = useSelector(({ loginRemember }) => loginRemember);
   const authReducer = useSelector(({ auth }) => auth);
 
   const useStyle = makeStyles((theme) => ({
@@ -59,7 +59,7 @@ function Logout() {
       if (values.clearRemember) {
         try {
 
-          dispatch(loginRedux.actions.logoutRemember());
+          dispatch(authRememberLoginRedux.actions.logoutRemember());
         } catch (err) {
           alert(err);
         } finally {
@@ -99,9 +99,11 @@ function Logout() {
               />
             </Paper>
             <Typography variant="h5" gutterBottom>LOGOUT</Typography>
-            <Grid item xs={12} lg={12}>
-              <FormikCheckBox formik={formik} name="clearRemember" label="เคลียร์ข้อมูลผู้ใช้งาน" />
-            </Grid>
+            {loginReducer.remember && (
+              <Grid item xs={12} lg={12}>
+                <FormikCheckBox formik={formik} name="clearRemember" label="เคลียร์ข้อมูลผู้ใช้งาน" />
+              </Grid>
+            )}
             <Grid
               item
               container

@@ -13,7 +13,7 @@ import * as CONST from "../../../../Constant";
 import * as swal from "../../Common/components/SweetAlert";
 import { useSelector } from "react-redux";
 import * as authRedux from "../_redux/authRedux";
-import * as loginRedux from "../_redux/loginRedux";
+import * as authRememberLoginRedux from "../_redux/authRememberLoginRedux";
 import * as authCrud from "../_redux/authCrud";
 
 var CryptoJS = require("crypto-js");
@@ -70,7 +70,7 @@ function Login() {
           if (res.data.isSuccess) {
             let loginDetail = {};
             let loginRemember = {};
-            
+
             //set remember password
             //encrypt pass
             let ciphertext = CryptoJS.AES.encrypt(
@@ -81,7 +81,7 @@ function Login() {
             loginRemember.password = ciphertext;
             loginRemember.remember = values.remember;
             //remember
-            dispatch(loginRedux.actions.loginRemember(loginRemember));
+            dispatch(authRememberLoginRedux.actions.loginRemember(loginRemember));
             //set remember password end
 
 
