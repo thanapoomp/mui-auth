@@ -15,8 +15,6 @@ import * as authSSOMessage from '../_redux/authSSOMessage'
 function Logout() {
 
   const loginReducer = useSelector(({ loginRemember }) => loginRemember);
-  const authReducer = useSelector(({ auth }) => auth);
-
   const useStyle = makeStyles((theme) => ({
     image: {
       width: 100,
