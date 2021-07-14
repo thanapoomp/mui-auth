@@ -6,15 +6,11 @@ import { Helmet } from "react-helmet";
 import * as CONST from "../../../../Constant";
 import { Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-<<<<<<< HEAD
-import { Grid, Paper } from "@material-ui/core";
-import * as authSSOMessage from '../_redux/authSSOMessage'
-=======
 import { Grid, Paper, Button, Icon } from "@material-ui/core";
 import { useFormik } from "formik";
 import * as authRememberLoginRedux from "../_redux/authRememberLoginRedux";
 import FormikCheckBox from "../../Common/components/CustomFormik/FormikCheckBox";
->>>>>>> cdfabe786f95434ac415abe0c5249cf2c77fe0c0
+import * as authSSOMessage from '../_redux/authSSOMessage'
 
 function Logout() {
 
@@ -29,26 +25,6 @@ function Logout() {
   }));
   const classes = useStyle();
   const dispatch = useDispatch();
-
-  // React.useEffect(() => {
-  //   dispatch(auth.actions.logout());
-
-  //   const timeoutID = window.setTimeout(() => {
-  //     window.close();
-  //   }, 1000);
-
-  //   return () => window.clearTimeout(timeoutID);
-
-  // }, []);
-
-  React.useEffect(() => {
-    dispatch(auth.actions.logout());
-    authSSOMessage.sendEventMessage("token-updated", "");
-    const timeoutID = window.setTimeout(() => {
-      window.close();
-    }, 1000);
-    return () => window.clearTimeout(timeoutID);
-  }, [authReducer.authToken])
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -78,6 +54,11 @@ function Logout() {
 
         dispatch(auth.actions.logout());
       }
+
+      authSSOMessage.sendEventMessage("token-updated", "");
+      window.setTimeout(() => {
+        window.close();
+      }, 1000);
     },
   });
 
