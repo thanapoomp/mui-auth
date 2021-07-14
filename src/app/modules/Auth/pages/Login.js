@@ -63,38 +63,35 @@ function Login() {
       remember: (loginReducer.remember === null ? false : loginReducer.remember)
     },
     onSubmit: (values) => {
-      debugger
       //submit ....
       authCrud
         .login(values.username, values.password, values.source)
         .then((res) => {
           if (res.data.isSuccess) {
-            // debugger
             let loginDetail = {};
             let loginRemember = {};
-
-            //get token
-            loginDetail.authToken = res.data.data;
-
-            //get user
-            loginDetail.user = authCrud.getUserByToken(res.data.data);
-
-            // get exp
-            loginDetail.exp = authCrud.getExp(res.data.data);
-
-            //get roles
-            loginDetail.roles = authCrud.getRoles(res.data.data);
-
-            dispatch(authRedux.actions.login(loginDetail));
-
+            
+            //set remember password
             //encrypt pass
-            let ciphertext = CryptoJS.AES.encrypt(values.password, 'key').toString();
-
+            let ciphertext = CryptoJS.AES.encrypt(
+              values.password,
+              "key"
+            ).toString();
             loginRemember.user = values.username;
             loginRemember.password = ciphertext;
             loginRemember.remember = values.remember;
             //remember
             dispatch(loginRedux.actions.loginRemember(loginRemember));
+            //set remember password end
+
+
+            //set login
+            loginDetail.authToken = res.data.data;
+            loginDetail.user = authCrud.getUserByToken(res.data.data);
+            loginDetail.exp = authCrud.getExp(res.data.data);
+            loginDetail.roles = authCrud.getRoles(res.data.data);
+            dispatch(authRedux.actions.login(loginDetail));
+            //set login end
 
           } else {
             //Failed
@@ -154,6 +151,10 @@ function Login() {
             />
           </Grid>
 
+          <Grid item xs={12} lg={12}>
+            <FormikCheckBox formik={formik} name="remember" label="Remember me" />
+          </Grid>
+
           <Grid
             item
             container
@@ -178,9 +179,7 @@ function Login() {
 
             {formik.isSubmitting && <CircularProgress size={24} />}
           </Grid>
-          <Grid item xs={12} lg={12}>
-            <FormikCheckBox formik={formik} name="remember" label="Remember me" />
-          </Grid>
+
         </Grid>
       </Box>
       {/* <br></br>

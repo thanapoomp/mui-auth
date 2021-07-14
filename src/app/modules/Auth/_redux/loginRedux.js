@@ -18,7 +18,6 @@ export const reducer = persistReducer(
 		switch (action.type) {
 			//login
 			case actionTypes.LoginRemember: {
-				debugger
 				return {
 					...state,
 					user: action.payload.user,

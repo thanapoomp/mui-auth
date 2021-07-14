@@ -20,6 +20,7 @@ function Logout() {
   }));
   const classes = useStyle();
   const dispatch = useDispatch();
+
   const [second, setSecond] = React.useState(3);
 
   React.useEffect(() => {
@@ -55,8 +56,20 @@ function Logout() {
     } else {
       dispatch(auth.actions.logout());
     }
+  }, []);
+
+
+  React.useEffect(() => {
+    dispatch(auth.actions.logout());
+
+    const timeoutID = window.setTimeout(() => {
+      window.close();
+    }, 1000);
+
+    return () => window.clearTimeout(timeoutID);
 
   }, []);
+
 
   return (
     <div>
@@ -83,7 +96,8 @@ function Logout() {
           </Paper>
           <Typography variant="body1">Log out สำเร็จ</Typography>
           <Typography variant="body1">
-            คุณสามารถปิดหน้านี้ได้ {second > 0 && `(${second})`}
+            {/* คุณสามารถปิดหน้านี้ได้ {second > 0 && `(${second})`} */}
+            คุณสามารถปิดหน้านี้ได้
           </Typography>
         </Grid>
       </Grid>
