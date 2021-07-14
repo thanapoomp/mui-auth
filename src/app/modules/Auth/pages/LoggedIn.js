@@ -19,9 +19,13 @@ function LoggedIn() {
   const classes = useStyle();
 
   React.useEffect(() => {
-    if (authReducer.authToken) {
-      window.close();
-    }
+    const timeoutID = window.setTimeout(() => {
+      if (authReducer.authToken) {
+        window.close();
+      }
+    }, 1000);
+
+    return () => window.clearTimeout(timeoutID);
   }, [authReducer.authToken])
 
   return (

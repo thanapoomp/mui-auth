@@ -18,4 +18,4 @@ export const SSO_URL_LOGOUT =
   !process.env.NODE_ENV || process.env.NODE_ENV === "development"
     // ? "https://auth.thanapoom.cc/#/logout" //dev
     ? "http://localhost:3000/#/logout" //dev
-    : "http://localhost:3000/#/logout"; // Production
+    : "https://auth.thanapoom.cc/#/logout"; // Production

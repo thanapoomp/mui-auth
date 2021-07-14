@@ -7,6 +7,7 @@ import * as CONST from "../../../../Constant";
 import { Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Paper } from "@material-ui/core";
+import * as authSSOMessage from '../_redux/authSSOMessage'
 
 function Logout() {
   const useStyle = makeStyles((theme) => ({
@@ -20,7 +21,7 @@ function Logout() {
 
   React.useEffect(() => {
     dispatch(auth.actions.logout());
-
+    authSSOMessage.sendEventMessage("token-updated", "");
     const timeoutID = window.setTimeout(() => {
       window.close();
     }, 1000);
