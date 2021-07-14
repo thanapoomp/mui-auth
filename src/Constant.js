@@ -8,8 +8,8 @@ export const APP_INFO = {
 
 export const API_URL =
   !process.env.NODE_ENV || process.env.NODE_ENV === "development"
-    // ? "https://auth.devsiamsmile.com/api" //dev
-    ? "https://api.thanapoom.cc/api" //dev
+    ? "https://auth.devsiamsmile.com/api" //dev
+    // ? "https://api.thanapoom.cc/api" //dev
     // ? "https://localhost:44388/api" // local
     : // ?  "http://localhost:54821/api" //dev
     "https://api.thanapoom.cc/api"; // Production
