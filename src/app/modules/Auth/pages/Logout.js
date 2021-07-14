@@ -60,8 +60,8 @@ function Logout() {
         try {
 
           dispatch(loginRedux.actions.logoutRemember());
-        } catch (error) {
-
+        } catch (err) {
+          alert(err);
         } finally {
 
           dispatch(auth.actions.logout());
