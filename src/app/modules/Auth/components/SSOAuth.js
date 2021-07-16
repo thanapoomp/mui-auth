@@ -23,11 +23,12 @@ function SSOAuth(props) {
   const handleUpdateToken = (e) => {
     //get local storage 'token'
     if (e.key === "persist:auth") {
-      let authLocalStorage = JSON.parse(localStorage.getItem("persist:auth"));
-      if (authLocalStorage.authToken) {
-        let token = authLocalStorage.authToken.replaceAll('"', "");
+      let newValue = JSON.parse(e.newValue);
+      if (newValue.authToken) {
+        let token = newValue.authToken.replaceAll('"', "");
         if (token !== authReducer.authToken) {
-          // debugger
+          if (token !== "null" && token !== "") {
+            // debugger
           let loginDetail = {};
 
           //get token
@@ -43,12 +44,14 @@ function SSOAuth(props) {
           //get roles
           loginDetail.roles = authCrud.getRoles(token);
           console.log("token-update-renew(SSOAuth)");
-          authSSOMessage.sendEventMessage("token-updated", token);
           dispatch(authAction.actions.renewToken(loginDetail));
+          } else {
+            console.log("token-update-logout(SSOAuth)");
+            dispatch(authAction.actions.logout());
+          }
         }
       } else {
         console.log("token-update-logout(SSOAuth)");
-        authSSOMessage.sendEventMessage("token-updated", "");
         dispatch(authAction.actions.logout());
       }
     }

@@ -10,11 +10,10 @@ import { Grid, Paper, Button, Icon } from "@material-ui/core";
 import { useFormik } from "formik";
 import * as authRememberLoginRedux from "../_redux/authRememberLoginRedux";
 import FormikCheckBox from "../../Common/components/CustomFormik/FormikCheckBox";
-import * as authSSOMessage from '../_redux/authSSOMessage'
 
 function Logout() {
-
   const loginReducer = useSelector(({ loginRemember }) => loginRemember);
+  const authReducer = useSelector(({ auth }) => auth);
   const useStyle = makeStyles((theme) => ({
     image: {
       width: 100,
@@ -23,6 +22,18 @@ function Logout() {
   }));
   const classes = useStyle();
   const dispatch = useDispatch();
+
+  const logoutRememberPromise = () =>
+    new Promise((resolve) => {
+      dispatch(authRememberLoginRedux.actions.logoutRemember());
+      resolve();
+    });
+
+  const logoutPromise = () =>
+    new Promise((resolve) => {
+      dispatch(auth.actions.logout());
+      resolve();
+    });
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -34,38 +45,30 @@ function Logout() {
       return errors;
     },
     initialValues: {
-      clearRemember: false
+      clearRemember: false,
     },
     onSubmit: (values) => {
       //submit ....
       if (values.clearRemember) {
         try {
-
-          dispatch(authRememberLoginRedux.actions.logoutRemember());
+          logoutRememberPromise().then(() => {
+            dispatch(auth.actions.logout());
+          });
         } catch (err) {
           alert(err);
         } finally {
-
-          dispatch(auth.actions.logout());
         }
       } else {
-
-        dispatch(auth.actions.logout());
+        logoutPromise();
       }
-
-      authSSOMessage.sendEventMessage("token-updated", "");
-      window.setTimeout(() => {
-        window.close();
-      }, 1000);
     },
   });
-
 
   return (
     <form onSubmit={formik.handleSubmit}>
       <div>
         <Helmet>
-          <title>Logged out:{CONST.APP_INFO.name}</title>
+          <title>Logout out:{CONST.APP_INFO.name}</title>
         </Helmet>
         <Grid container spacing={3}>
           {/* logo */}
@@ -85,10 +88,16 @@ function Logout() {
                 src={process.env.PUBLIC_URL + "/logo192.png"}
               />
             </Paper>
-            <Typography variant="h5" gutterBottom>LOGOUT</Typography>
+            <Typography variant="h5" gutterBottom>
+              LOGOUT
+            </Typography>
             {loginReducer.remember && (
               <Grid item xs={12} lg={12}>
-                <FormikCheckBox formik={formik} name="clearRemember" label="เคลียร์ข้อมูลผู้ใช้งาน" />
+                <FormikCheckBox
+                  formik={formik}
+                  name="clearRemember"
+                  label="เคลียร์ข้อมูลผู้ใช้งาน"
+                />
               </Grid>
             )}
             <Grid
@@ -101,16 +110,20 @@ function Logout() {
               alignItems="center"
               style={{ marginTop: 80 }}
             >
-              <Button
-                type="submit"
-                disabled={formik.isSubmitting}
-                fullWidth
-                color="primary"
-                startIcon={<Icon>logout</Icon>}
-                variant="contained"
-              >
-                Logout
-              </Button>
+              {authReducer.authToken ? (
+                <Button
+                  type="submit"
+                  disabled={formik.isSubmitting}
+                  fullWidth
+                  color="primary"
+                  startIcon={<Icon>logout</Icon>}
+                  variant="contained"
+                >
+                  Logout
+                </Button>
+              ) : (
+                <Typography variant="h6">log out สำเร็จ</Typography>
+              )}
             </Grid>
           </Grid>
         </Grid>

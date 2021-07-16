@@ -2,9 +2,8 @@
 import React from "react";
 import * as authCrud from "../_redux/authCrud";
 import * as authAction from "../_redux/authRedux";
+import * as CONST from '../../../../Constant'
 import { useDispatch, useSelector } from "react-redux";
-import * as authSSOMessage from '../_redux/authSSOMessage'
-var dayjs = require("dayjs");
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -14,36 +13,58 @@ function getRandomInt(min, max) {
 
 function NewTokenHandler() {
   const dispatch = useDispatch();
-
-  //random renew [min,max] second before expire
-  //set random to avoid call api renew in the same time
-  const [minMaxSecToRenew] = React.useState({
-    min: 10,
-    max: 600,
-  });
   const authReducer = useSelector(({ auth }) => auth);
-  var renewTokenTimer;
+
+
+
+
+  const setRandomInterval = (intervalFunction, minDelay, maxDelay) => {
+    let timeout;
+  
+    const runInterval = () => {
+      const timeoutFunction = () => {
+        intervalFunction();
+        runInterval();
+      };
+  
+      const delay = Math.floor(Math.random() * (maxDelay - minDelay + 1)) + minDelay;
+  
+      timeout = setTimeout(timeoutFunction, delay);
+    };
+  
+    runInterval();
+  
+    return {
+      clear() { clearTimeout(timeout) },
+    };
+  };
 
   React.useEffect(() => {
-    if (authReducer.authToken !== "null" && authReducer.authToken !== "") {
-      // get expire
-      let tokenExpire = authCrud.getExp(authReducer.authToken);
-      let countDownSec = getCountDownSec(tokenExpire);
-      renewTokenTimer = setTimeout(() => {
-        renew();
-      }, countDownSec);
-    }else{
-      console.log("token-update-logout-(TokenHandler)");
-      authSSOMessage.sendEventMessage("token-updated", "");
-      dispatch(authAction.actions.logout());
-    }
-    return () => clearTimeout(renewTokenTimer);
-  }, [authReducer.authToken]);
+    const interval = setRandomInterval(
+      () => {
+        if (
+          authReducer.authToken !== "null" &&
+          authReducer.authToken !== "" &&
+          authReducer.authToken !== null
+        ) {
+          renew();
+        } else {
+          dispatch(authAction.actions.logout());
+        }
+      },
+      CONST.RENEW_TOKEN_MS.min,
+      CONST.RENEW_TOKEN_MS.max
+    );
+
+    // Clear when dispose
+    return () => interval.clear();
+  }, []);
 
   const renew = () => {
     authCrud
       .renewToken()
       .then((res) => {
+        // debugger
         if (res.data.isSuccess) {
           let token = res.data.data;
           let loginDetail = {};
@@ -61,37 +82,20 @@ function NewTokenHandler() {
           //get roles
           loginDetail.roles = authCrud.getRoles(token);
 
-          console.log("token-update-renew-(TokenHandler)");
-          authSSOMessage.sendEventMessage("token-updated", token);
           dispatch(authAction.actions.renewToken(loginDetail));
         } else {
           alert(res.data.message);
-          console.log("token-update-logout-(TokenHandler)");
-          authSSOMessage.sendEventMessage("token-updated", "");
           dispatch(authAction.actions.logout());
         }
       })
       .catch((error) => {
-        alert(error.message);
-        console.log("token-update-logout-(TokenHandler)");
-        authSSOMessage.sendEventMessage("token-updated", "");
-        dispatch(authAction.actions.logout());
+        // debugger
+          alert(error.message);
+          dispatch(authAction.actions.logout());
       });
   };
 
-  const getCountDownSec = (tokenExpire) => {
-    let secondBeforeExpire =
-      getRandomInt(minMaxSecToRenew.min, minMaxSecToRenew.max) * 1000;
-    //calculate next renew time duration from now
-    let timeToRenew = tokenExpire.add(secondBeforeExpire * -1, "second");
-
-    let result = dayjs().diff(timeToRenew, "second");
-
-    console.log("time(sec):", result);
-    return result;
-  };
-
-  return <div>{/* {authReducer.authToken} */}</div>;
+  return <React.Fragment></React.Fragment>;
 }
 
 export default NewTokenHandler;

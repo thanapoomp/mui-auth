@@ -1,7 +1,6 @@
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-
-
+import * as authSSOMessage from "../_redux/authSSOMessage";
 export const actionTypes = {
   Login: "[Login] Action",
   Logout: "[Logout] Action",
@@ -17,14 +16,17 @@ const initialAuthState = {
 };
 
 export const reducer = persistReducer(
-  { storage, key: "auth", whitelist: ["user", "authToken", "exp", "roles", "source"] },
+  { storage, key: "auth", whitelist: ["user", "authToken", "exp", "roles"] },
   (state = initialAuthState, action) => {
     switch (action.type) {
       //login
       case actionTypes.Login: {
+        authSSOMessage.sendEventMessage(
+          "token-updated",
+          action.payload.authToken
+        );
         return {
           ...state,
-          source: initialAuthState.source,
           user: action.payload.user,
           authToken: action.payload.authToken,
           exp: action.payload.exp,
@@ -33,13 +35,17 @@ export const reducer = persistReducer(
       }
 
       case actionTypes.Logout: {
-        return {initialAuthState};
+        authSSOMessage.sendEventMessage("token-updated", "");
+        return  initialAuthState ;
       }
 
       case actionTypes.RenewToken: {
+        authSSOMessage.sendEventMessage(
+          "token-updated",
+          action.payload.authToken
+        );
         return {
           ...state,
-          source: initialAuthState.source,
           user: action.payload.user,
           authToken: action.payload.authToken,
           exp: action.payload.exp,
@@ -57,6 +63,4 @@ export const actions = {
   login: (payload) => ({ type: actionTypes.Login, payload }),
   logout: () => ({ type: actionTypes.Logout }),
   renewToken: (payload) => ({ type: actionTypes.RenewToken, payload }),
-  
 };
-

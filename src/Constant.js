@@ -1,21 +1,31 @@
 export const APP_INFO = {
-  name: 'Smile SSO (UAT)',
-  version: '0.1',
-  since: '2020',
-  description: 'Siam smile',
-  contactUrl: 'https://www.siamsmile.co.th'
-}
+  name: "Smile SSO",
+  version: "0.2.0",
+  since: "2020",
+  description: "Siam smile",
+  contactUrl: "https://www.siamsmile.co.th",
+};
+
+//update token in 10 - 30 minutes (random to avoid multipages call api in the same time )
+export const RENEW_TOKEN_MS = {
+  min: 600000,
+  max: 1800000,
+};
+
+export const CHECKVERSION_EVERY_MINUTE = 10;
 
 export const API_URL =
   !process.env.NODE_ENV || process.env.NODE_ENV === "development"
     ? "https://auth.devsiamsmile.com/api" //dev
-    // ? "https://api.thanapoom.cc/api" //dev
-    // ? "https://localhost:44388/api" // local
-    : // ?  "http://localhost:54821/api" //dev
-    "https://api.thanapoom.cc/api"; // Production
+    : // :  "https://api.thanapoom.cc/api" //dev
+      "https://auth.devsiamsmile.com/api"; // Production
+
+export const VERSIONCHECK_URL =
+  !process.env.NODE_ENV || process.env.NODE_ENV === "development"
+    ? "https://api.thanapoom.cc/api/ClientVersion/GetLastClientVersion" //dev
+    : "https://api.thanapoom.cc/api/ClientVersion/GetLastClientVersion"; // Production
 
 export const SSO_URL_LOGOUT =
   !process.env.NODE_ENV || process.env.NODE_ENV === "development"
-    // ? "https://auth.thanapoom.cc/#/logout" //dev
     ? "http://localhost:3000/#/logout" //dev
     : "https://auth.thanapoom.cc/#/logout"; // Production
