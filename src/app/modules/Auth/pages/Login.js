@@ -2,13 +2,18 @@
 /* eslint-disable no-restricted-imports */
 import React from "react";
 import { useFormik } from "formik";
-import { Grid, Button, Box, Icon, Paper, CircularProgress,makeStyles } from "@material-ui/core/";
+import {
+  Grid,
+  Button,
+  Icon,
+  Paper,
+  CircularProgress,
+  makeStyles,
+} from "@material-ui/core/";
 import { useDispatch } from "react-redux";
-import { Helmet } from "react-helmet";
 import { useSelector } from "react-redux";
 import FormikTextField from "../../Common/components/CustomFormik/FormikTextField";
 import FormikCheckBox from "../../Common/components/CustomFormik/FormikCheckBox";
-import * as CONST from "../../../../Constant";
 import * as swal from "../../Common/components/SweetAlert";
 import * as authRedux from "../_redux/authRedux";
 import * as authRememberLoginRedux from "../_redux/authRememberLoginRedux";
@@ -29,15 +34,15 @@ function Login() {
   const [state] = React.useState({
     source: "SiamSmile.Dev",
   });
-  const [pass, setpass] = React.useState("")
+  const [pass, setpass] = React.useState("");
 
   //decrypt pass
   React.useEffect(() => {
     if (loginReducer.password !== null) {
-      var bytes = CryptoJS.AES.decrypt(loginReducer.password, 'key');
+      var bytes = CryptoJS.AES.decrypt(loginReducer.password, "key");
       setpass(bytes.toString(CryptoJS.enc.Utf8));
     }
-  }, [])
+  }, []);
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -55,10 +60,10 @@ function Login() {
       return errors;
     },
     initialValues: {
-      username: (loginReducer.remember ? loginReducer.user : ""),
-      password: (loginReducer.remember ? pass : ""),
+      username: loginReducer.remember ? loginReducer.user : "",
+      password: loginReducer.remember ? pass : "",
       source: state.source,
-      remember: (loginReducer.remember === null ? false : loginReducer.remember)
+      remember: loginReducer.remember === null ? false : loginReducer.remember,
     },
     onSubmit: (values) => {
       //submit ....
@@ -79,9 +84,10 @@ function Login() {
             loginRemember.password = ciphertext;
             loginRemember.remember = values.remember;
             //remember
-            dispatch(authRememberLoginRedux.actions.loginRemember(loginRemember));
+            dispatch(
+              authRememberLoginRedux.actions.loginRemember(loginRemember)
+            );
             //set remember password end
-
 
             //set login
             loginDetail.authToken = res.data.data;
@@ -90,7 +96,6 @@ function Login() {
             loginDetail.roles = authCrud.getRoles(res.data.data);
             dispatch(authRedux.actions.login(loginDetail));
             //set login end
-
           } else {
             //Failed
             swal.swalError("Login failed", res.data.message).then((res) => {
@@ -109,86 +114,80 @@ function Login() {
   });
 
   return (
-    <form onSubmit={formik.handleSubmit}>
-      <Helmet>
-        <title>Login:{CONST.APP_INFO.name}</title>
-      </Helmet>
-      <Box display="flex" p={1} bgcolor="background.paper">
-        <Grid container spacing={3}>
-          {/* logo */}
-          <Grid
-            container
-            item
-            xs={12}
-            lg={12}
-            direction="row"
-            justify="center"
-            alignItems="center"
-          >
-            <Paper elevation={0} style={{ marginTop: 60, padding: 5 }}>
-              <img
-                className={classes.image}
-                alt=""
-                src={process.env.PUBLIC_URL + "/logo192.png"}
+      <form onSubmit={formik.handleSubmit}>
+          <Grid container spacing={3} style={{overflow:'hidden'}}>
+            {/* logo */}
+            <Grid
+              container
+              item
+              xs={12}
+              lg={12}
+              direction="row"
+              justify="center"
+              alignItems="center"
+            >
+              <Paper elevation={0} style={{ marginTop: 60, padding: 5 }}>
+                <img
+                  className={classes.image}
+                  alt=""
+                  src={process.env.PUBLIC_URL + "/logo192.png"}
+                />
+              </Paper>
+            </Grid>
+
+            {/* Start username */}
+            <Grid item xs={12} lg={12}>
+              <FormikTextField
+                formik={formik}
+                name="username"
+                label="Username"
               />
-            </Paper>
+            </Grid>
+
+            {/* Start password */}
+            <Grid item xs={12} lg={12}>
+              <FormikTextField
+                formik={formik}
+                name="password"
+                label="Password"
+                password
+              />
+            </Grid>
+
+            <Grid item xs={12} lg={12}>
+              <FormikCheckBox
+                formik={formik}
+                name="remember"
+                label="Remember me"
+              />
+            </Grid>
+
+            <Grid
+              item
+              container
+              xs={12}
+              lg={12}
+              direction="column"
+              justify="center"
+              alignItems="center"
+            >
+              {!formik.isSubmitting && (
+                <Button
+                  type="submit"
+                  disabled={formik.isSubmitting}
+                  fullWidth
+                  color="primary"
+                  startIcon={<Icon>login</Icon>}
+                  variant="contained"
+                >
+                  Login
+                </Button>
+              )}
+
+              {formik.isSubmitting && <CircularProgress size={24} />}
+            </Grid>
           </Grid>
-
-          {/* Start username */}
-          <Grid item xs={12} lg={12}>
-            <FormikTextField formik={formik} name="username" label="Username" />
-          </Grid>
-
-          {/* Start password */}
-          <Grid item xs={12} lg={12}>
-            <FormikTextField
-              formik={formik}
-              name="password"
-              label="Password"
-              password
-            />
-          </Grid>
-
-          <Grid item xs={12} lg={12}>
-            <FormikCheckBox formik={formik} name="remember" label="Remember me" />
-          </Grid>
-
-          <Grid
-            item
-            container
-            xs={12}
-            lg={12}
-            direction="column"
-            justify="center"
-            alignItems="center"
-          >
-            {!formik.isSubmitting && (
-              <Button
-                type="submit"
-                disabled={formik.isSubmitting}
-                fullWidth
-                color="primary"
-                startIcon={<Icon>login</Icon>}
-                variant="contained"
-              >
-                Login
-              </Button>
-            )}
-
-            {formik.isSubmitting && <CircularProgress size={24} />}
-          </Grid>
-
-        </Grid>
-      </Box>
-      {/* <br></br>
-      values: {JSON.stringify(formik.values)}
-      <br></br>
-      error: {JSON.stringify(formik.errors)}
-      <br></br>
-      touched: {JSON.stringify(formik.touched)}
-      <br></br>
-      dirty: {JSON.stringify(formik.dirty)} */}
-    </form>
+      </form>
   );
 }
 

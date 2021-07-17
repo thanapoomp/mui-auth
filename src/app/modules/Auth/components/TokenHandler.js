@@ -5,18 +5,9 @@ import * as authAction from "../_redux/authRedux";
 import * as CONST from '../../../../Constant'
 import { useDispatch, useSelector } from "react-redux";
 
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 function NewTokenHandler() {
   const dispatch = useDispatch();
   const authReducer = useSelector(({ auth }) => auth);
-
-
-
 
   const setRandomInterval = (intervalFunction, minDelay, maxDelay) => {
     let timeout;

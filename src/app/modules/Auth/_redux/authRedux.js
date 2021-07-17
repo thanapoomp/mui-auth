@@ -1,3 +1,4 @@
+import { put, takeLatest } from "redux-saga/effects";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import * as authSSOMessage from "../_redux/authSSOMessage";
@@ -35,7 +36,6 @@ export const reducer = persistReducer(
       }
 
       case actionTypes.Logout: {
-        authSSOMessage.sendEventMessage("token-updated", "");
         return  initialAuthState ;
       }
 
@@ -64,3 +64,14 @@ export const actions = {
   logout: () => ({ type: actionTypes.Logout }),
   renewToken: (payload) => ({ type: actionTypes.RenewToken, payload }),
 };
+
+export function* saga() {
+  // yield takeLatest(actionTypes.ACTIONTYPE, function* actionNameSaga() {
+  //   yield put(actions.actionToExecute());
+  // });
+
+  yield takeLatest(actionTypes.Logout, function* logoutSaga() {
+    yield put(() => {authSSOMessage.sendEventMessage("token-updated", "")});
+  });
+
+}

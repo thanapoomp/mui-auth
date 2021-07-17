@@ -10,7 +10,6 @@ import { Redirect, Switch, Route } from "react-router-dom";
 import { shallowEqual, useSelector } from "react-redux";
 import BasePage from "./BasePage";
 import  Login  from "./modules/Auth/pages/Login";
-import  Logout  from "./modules/Auth/pages/Logout";
 import ErrorsPage from "./pages/Error";
 
 export function Routes() {
@@ -25,8 +24,6 @@ export function Routes() {
     <Switch>
       
       <Route exact path="/error" component={ErrorsPage} />
-
-      <Route exact path="/logout" component={Logout} />
       
       {!isAuthorized ? (
         /*Render auth page when user at `/auth` and not authorized.*/
