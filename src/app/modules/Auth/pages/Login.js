@@ -114,80 +114,73 @@ function Login() {
   });
 
   return (
-      <form onSubmit={formik.handleSubmit}>
-          <Grid container spacing={2} >
-            {/* logo */}
-            <Grid
-              container
-              item
-              xs={12}
-              lg={12}
-              direction="row"
-              justify="center"
-              alignItems="center"
+    <form onSubmit={formik.handleSubmit}>
+      <Grid container spacing={2}>
+        {/* logo */}
+        <Grid
+          container
+          item
+          xs={12}
+          lg={12}
+          direction="row"
+          justify="center"
+          alignItems="center"
+        >
+          <Paper elevation={0} style={{ marginTop: 60 }}>
+            <img
+              className={classes.image}
+              alt=""
+              src={process.env.PUBLIC_URL + "/logo192.png"}
+            />
+          </Paper>
+        </Grid>
+
+        {/* Start username */}
+        <Grid item xs={12} lg={12} style={{ marginLeft: 15, marginRight: 15 }}>
+          <FormikTextField formik={formik} name="username" label="Username" />
+        </Grid>
+
+        {/* Start password */}
+        <Grid item xs={12} lg={12} style={{ marginLeft: 15, marginRight: 15 }}>
+          <FormikTextField
+            formik={formik}
+            name="password"
+            label="Password"
+            password
+          />
+        </Grid>
+
+        <Grid item xs={12} lg={12} style={{ marginLeft: 15, marginRight: 15 }}>
+          <FormikCheckBox formik={formik} name="remember" label="Remember me" />
+        </Grid>
+
+        <Grid
+          item
+          style={{ marginLeft: 15, marginRight: 15 }}
+          container
+          xs={12}
+          lg={12}
+          direction="column"
+          justify="center"
+          alignItems="center"
+        >
+          {!formik.isSubmitting && (
+            <Button
+              type="submit"
+              disabled={formik.isSubmitting}
+              fullWidth
+              color="primary"
+              startIcon={<Icon>login</Icon>}
+              variant="contained"
             >
-              <Paper elevation={0} style={{ marginTop: 60 }}>
-                <img
-                  className={classes.image}
-                  alt=""
-                  src={process.env.PUBLIC_URL + "/logo192.png"}
-                />
-              </Paper>
-            </Grid>
+              Login
+            </Button>
+          )}
 
-            {/* Start username */}
-            <Grid item xs={12} lg={12}>
-              <FormikTextField
-                formik={formik}
-                name="username"
-                label="Username"
-              />
-            </Grid>
-
-            {/* Start password */}
-            <Grid item xs={12} lg={12}>
-              <FormikTextField
-                formik={formik}
-                name="password"
-                label="Password"
-                password
-              />
-            </Grid>
-
-            <Grid item xs={12} lg={12}>
-              <FormikCheckBox
-                formik={formik}
-                name="remember"
-                label="Remember me"
-              />
-            </Grid>
-
-            <Grid
-              item
-              container
-              xs={12}
-              lg={12}
-              direction="column"
-              justify="center"
-              alignItems="center"
-            >
-              {!formik.isSubmitting && (
-                <Button
-                  type="submit"
-                  disabled={formik.isSubmitting}
-                  fullWidth
-                  color="primary"
-                  startIcon={<Icon>login</Icon>}
-                  variant="contained"
-                >
-                  Login
-                </Button>
-              )}
-
-              {formik.isSubmitting && <CircularProgress size={24} />}
-            </Grid>
-          </Grid>
-      </form>
+          {formik.isSubmitting && <CircularProgress size={24} />}
+        </Grid>
+      </Grid>
+    </form>
   );
 }
 
