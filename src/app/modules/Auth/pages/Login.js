@@ -115,7 +115,7 @@ function Login() {
 
   return (
       <form onSubmit={formik.handleSubmit}>
-          <Grid container spacing={3} style={{overflow:'hidden'}}>
+          <Grid container spacing={2} >
             {/* logo */}
             <Grid
               container
@@ -126,7 +126,7 @@ function Login() {
               justify="center"
               alignItems="center"
             >
-              <Paper elevation={0} style={{ marginTop: 60, padding: 5 }}>
+              <Paper elevation={0} style={{ marginTop: 60 }}>
                 <img
                   className={classes.image}
                   alt=""
