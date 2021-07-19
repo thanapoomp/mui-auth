@@ -1,6 +1,6 @@
 export const APP_INFO = {
   name: "Smile SSO",
-  version: "0.2.0",
+  version: "0.3.0",
   since: "2020",
   description: "Siam smile",
   contactUrl: "https://www.siamsmile.co.th",

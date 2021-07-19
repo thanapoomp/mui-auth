@@ -2,7 +2,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as auth from "../_redux/authRedux";
-import { Typography ,CircularProgress } from "@material-ui/core";
+import { CircularProgress } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Paper, Button, Icon } from "@material-ui/core";
 import { useFormik } from "formik";
@@ -44,9 +44,6 @@ function Logout() {
     enableReinitialize: true,
     validate: (values) => {
       const errors = {};
-
-      //todo
-
       return errors;
     },
     initialValues: {
@@ -57,7 +54,7 @@ function Logout() {
       if (values.clearRemember) {
         try {
           logoutRememberPromise().then(() => {
-            dispatch(auth.actions.logout());
+            logoutPromise();
           });
         } catch (err) {
           alert(err);
@@ -108,8 +105,8 @@ function Logout() {
               <Grid
                 item
                 container
-                xs={6}
-                lg={6}
+                xs={12}
+                lg={12}
                 direction="column"
                 justify="center"
                 alignItems="center"
